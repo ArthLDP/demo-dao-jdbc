@@ -13,6 +13,8 @@ public class Seller implements Serializable {
     private Department department;
     private static final DateTimeFormatter birthdateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+    public Seller(){}
+
     public Seller(
             Integer id,
             String name,
