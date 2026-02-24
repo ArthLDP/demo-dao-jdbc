@@ -1,4 +1,4 @@
-#Testing database manipulation with JDBC (Java Database Connectivity).
+# Testing database manipulation with JDBC (Java Database Connectivity).
 
 - Create a MySQL database called coursejdbc. Make sure the db.properties is set correctly to your MySQL configuration.
 - Run database.sql script to generate tables and data.
