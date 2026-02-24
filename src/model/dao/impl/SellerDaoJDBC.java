@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SellerDaoJDBC implements SellerDao {
@@ -56,7 +57,8 @@ public class SellerDaoJDBC implements SellerDao {
                 return instanciateSeller(resultSet, department);
             }
             return null;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DbException(e.getMessage());
         }
         finally {
@@ -68,6 +70,43 @@ public class SellerDaoJDBC implements SellerDao {
     @Override
     public List<Seller> findAll() {
         return List.of();
+    }
+
+    @Override
+    public List<Seller> findByDepartment(Department department) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<Seller> sellers = new ArrayList<>();
+
+        try {
+            preparedStatement = connection.prepareStatement(
+                    "SELECT seller.*, department.name as DepName " +
+                    "FROM seller INNER JOIN department " +
+                    "ON department.id = DepartmentId " +
+                    "WHERE department.id = ? " +
+                    "ORDER BY Name"
+            );
+
+            preparedStatement.setInt(1, department.getId());
+            resultSet = preparedStatement.executeQuery();
+            Department departmentFromResultSet = null;
+
+            while (resultSet.next()) {
+                if (departmentFromResultSet == null) {
+                    departmentFromResultSet = instanciateDepartment(resultSet);
+                }
+
+                sellers.add(instanciateSeller(resultSet, departmentFromResultSet));
+            }
+            return sellers;
+        }
+        catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeResource(preparedStatement);
+            DB.closeResource(resultSet);
+        }
     }
 
     private Department instanciateDepartment(ResultSet resultSet) throws SQLException {
