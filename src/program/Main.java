@@ -6,6 +6,7 @@ import model.dao.impl.SellerDaoJDBC;
 import model.entities.Department;
 import model.entities.Seller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Main {
@@ -19,6 +20,11 @@ public class Main {
         List<Seller> sellersFoundByDepartment = sellerDaoJDBC.findByDepartment(departmentFoundById);
         List<Seller> allSellers = sellerDaoJDBC.findAll();
         List<Department> allDepartments = departmentDaoJDBC.findAll();
+
+        Department insertDepartment = new Department(null, "Games");
+        Seller insertSeller = new Seller(null, "Arthur", "arthur@email.com", LocalDateTime.now(),
+                5000.0, insertDepartment);
+
 
         System.out.println("Seller found:");
         System.out.println(sellerFoundById + "\n");
@@ -34,9 +40,29 @@ public class Main {
 
         System.out.println("All sellers:");
         allSellers.forEach(System.out::println);
+
         System.out.println();
 
         System.out.println("All departments:");
         allDepartments.forEach(System.out::println);
+
+        System.out.println();
+
+        System.out.print("Insert department");
+        departmentDaoJDBC.insert(insertDepartment);
+        System.out.println(" with id: " + insertDepartment.getId());
+        System.out.println("All departments with inserted department");
+        allDepartments = departmentDaoJDBC.findAll();
+        allDepartments.forEach(System.out::println);
+
+        System.out.println();
+
+        System.out.print("Insert seller");
+        sellerDaoJDBC.insert(insertSeller);
+        System.out.println(" with id: " + insertSeller.getId());
+        System.out.println("All sellers with inserted seller:");
+        allSellers = sellerDaoJDBC.findAll();
+        allSellers.forEach(System.out::println);
+
     }
 }

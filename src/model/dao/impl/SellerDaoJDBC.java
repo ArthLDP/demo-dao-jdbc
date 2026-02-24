@@ -20,7 +20,37 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public void insert(Seller seller) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
 
+        try {
+            preparedStatement = connection.prepareStatement(
+                    "INSERT INTO seller " +
+                        "(Name, Email, BirthDate, BaseSalary, DepartmentId) " +
+                        "VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+
+            setInsertSellerValues(preparedStatement, seller);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected < 1) {
+                throw new DbException("Seller insert error, No rows affected");
+            }
+
+            resultSet = preparedStatement.getGeneratedKeys();
+
+            if (resultSet.next()) {
+                int id = resultSet.getInt(1);
+                seller.setId(id);
+            }
+        }
+        catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeResource(preparedStatement);
+            DB.closeResource(resultSet);
+        }
     }
 
     @Override
@@ -147,5 +177,11 @@ public class SellerDaoJDBC implements SellerDao {
         return seller;
     }
 
-
+    private void setInsertSellerValues(PreparedStatement preparedStatement, Seller seller) throws SQLException {
+        preparedStatement.setString(1, seller.getName());
+        preparedStatement.setString(2, seller.getEmail());
+        preparedStatement.setObject(3, seller.getBirthdate());
+        preparedStatement.setDouble(4, seller.getBaseSalary());
+        preparedStatement.setInt(5, seller.getDepartment().getId());
+    }
 }
