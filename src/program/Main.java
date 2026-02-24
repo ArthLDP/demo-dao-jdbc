@@ -1,5 +1,6 @@
 package program;
 
+import db.DB;
 import model.dao.DaoFactory;
 import model.dao.impl.DepartmentDaoJDBC;
 import model.dao.impl.SellerDaoJDBC;
@@ -102,6 +103,7 @@ public class Main {
         allDepartments = departmentDaoJDBC.findAll();
         allDepartments.forEach(System.out::println);
 
+        DB.closeConnection();
         sc.close();
     }
 }
