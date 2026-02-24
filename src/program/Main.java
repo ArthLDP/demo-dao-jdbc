@@ -8,9 +8,11 @@ import model.entities.Seller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
         SellerDaoJDBC sellerDaoJDBC = DaoFactory.createSellerDao();
         DepartmentDaoJDBC departmentDaoJDBC = DaoFactory.createDepartmentDao();
 
@@ -81,5 +83,25 @@ public class Main {
         System.out.println("All sellers with updated seller:");
         allSellers = sellerDaoJDBC.findAll();
         allSellers.forEach(System.out::println);
+
+        System.out.println();
+
+        System.out.print("Type seller id to delete: ");
+        int sellerId = sc.nextInt();
+        sellerDaoJDBC.deleteById(sellerId);
+        System.out.println("All sellers with deleted seller:");
+        allSellers = sellerDaoJDBC.findAll();
+        allSellers.forEach(System.out::println);
+
+        System.out.println();
+
+        System.out.print("Type departmend id to delete: ");
+        int departmentId = sc.nextInt();
+        departmentDaoJDBC.deleteById(departmentId);
+        System.out.println("All departments with deleted seller:");
+        allDepartments = departmentDaoJDBC.findAll();
+        allDepartments.forEach(System.out::println);
+
+        sc.close();
     }
 }
