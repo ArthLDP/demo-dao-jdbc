@@ -6,7 +6,6 @@ import model.dao.impl.SellerDaoJDBC;
 import model.entities.Department;
 import model.entities.Seller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -14,19 +13,30 @@ public class Main {
         SellerDaoJDBC sellerDaoJDBC = DaoFactory.createSellerDao();
         DepartmentDaoJDBC departmentDaoJDBC = DaoFactory.createDepartmentDao();
 
-        Seller seller = sellerDaoJDBC.findById(5);
-        Department department = departmentDaoJDBC.findById(2);
+        Seller sellerFoundById = sellerDaoJDBC.findById(5);
+        Department departmentFoundById = departmentDaoJDBC.findById(2);
 
-        List<Seller> sellers = sellerDaoJDBC.findByDepartment(department);
+        List<Seller> sellersFoundByDepartment = sellerDaoJDBC.findByDepartment(departmentFoundById);
+        List<Seller> allSellers = sellerDaoJDBC.findAll();
+        List<Department> allDepartments = departmentDaoJDBC.findAll();
 
         System.out.println("Seller found:");
-        System.out.println(seller + "\n");
+        System.out.println(sellerFoundById + "\n");
         System.out.println("Department found:");
-        System.out.println(department + "\n");
+        System.out.println(departmentFoundById + "\n");
 
-        if (!sellers.isEmpty()) {
-            System.out.println("Sellers from " + sellers.getFirst().getDepartment().getName() + " department:");
-            sellers.forEach(System.out::println);
+        if (!sellersFoundByDepartment.isEmpty()) {
+            System.out.println("Sellers from " + sellersFoundByDepartment.getFirst().getDepartment().getName() +
+                    " department:");
+            sellersFoundByDepartment.forEach(System.out::println);
+            System.out.println();
         }
+
+        System.out.println("All sellers:");
+        allSellers.forEach(System.out::println);
+        System.out.println();
+
+        System.out.println("All departments:");
+        allDepartments.forEach(System.out::println);
     }
 }

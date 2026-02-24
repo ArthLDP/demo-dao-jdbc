@@ -6,10 +6,7 @@ import model.dao.SellerDao;
 import model.entities.Department;
 import model.entities.Seller;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +50,7 @@ public class SellerDaoJDBC implements SellerDao {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                Department department = instanciateDepartment(resultSet);
-                return instanciateSeller(resultSet, department);
+                return instanciateSeller(resultSet, instanciateDepartment(resultSet));
             }
             return null;
         }
@@ -69,7 +65,31 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public List<Seller> findAll() {
-        return List.of();
+        ResultSet resultSet = null;
+        Statement statement = null;
+        List<Seller> sellers = new ArrayList<>();
+
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(
+                    "SELECT seller.*,department.Name as DepName " +
+                        "FROM seller INNER JOIN department " +
+                        "ON seller.DepartmentId = department.Id"
+            );
+
+            while (resultSet.next()) {
+                sellers.add(instanciateSeller(resultSet, instanciateDepartment(resultSet)));
+            }
+
+            return sellers;
+        }
+        catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeResource(statement);
+            DB.closeResource(resultSet);
+        }
     }
 
     @Override

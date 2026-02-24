@@ -4,11 +4,10 @@ import db.DB;
 import db.DbException;
 import model.dao.DepartmentDao;
 import model.entities.Department;
+import model.entities.Seller;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DepartmentDaoJDBC implements DepartmentDao {
@@ -60,7 +59,27 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
     @Override
     public List<Department> findAll() {
-        return List.of();
+        ResultSet resultSet = null;
+        Statement statement = null;
+        List<Department> departments = new ArrayList<>();
+
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM department");
+
+            while (resultSet.next()) {
+                departments.add(instanciateDepartment(resultSet));
+            }
+
+            return departments;
+        }
+        catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeResource(statement);
+            DB.closeResource(resultSet);
+        }
     }
 
     private Department instanciateDepartment(ResultSet resultSet) throws SQLException {
