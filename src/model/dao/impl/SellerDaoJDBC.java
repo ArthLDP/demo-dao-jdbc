@@ -29,7 +29,7 @@ public class SellerDaoJDBC implements SellerDao {
                         "(Name, Email, BirthDate, BaseSalary, DepartmentId) " +
                         "VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
-            setInsertSellerValues(preparedStatement, seller);
+            setStatementSellerValues(preparedStatement, seller);
 
             int rowsAffected = preparedStatement.executeUpdate();
 
@@ -55,7 +55,26 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public void update(Seller seller) {
+        PreparedStatement preparedStatement = null;
 
+        try {
+            preparedStatement = connection.prepareStatement(
+                    "UPDATE seller " +
+                        "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? " +
+                        "WHERE Id = ?"
+            );
+
+            setStatementSellerValues(preparedStatement, seller);
+            preparedStatement.setInt(6, seller.getId());
+
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeResource(preparedStatement);
+        }
     }
 
     @Override
@@ -177,7 +196,7 @@ public class SellerDaoJDBC implements SellerDao {
         return seller;
     }
 
-    private void setInsertSellerValues(PreparedStatement preparedStatement, Seller seller) throws SQLException {
+    private void setStatementSellerValues(PreparedStatement preparedStatement, Seller seller) throws SQLException {
         preparedStatement.setString(1, seller.getName());
         preparedStatement.setString(2, seller.getEmail());
         preparedStatement.setObject(3, seller.getBirthdate());

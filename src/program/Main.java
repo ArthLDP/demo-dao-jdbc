@@ -25,7 +25,6 @@ public class Main {
         Seller insertSeller = new Seller(null, "Arthur", "arthur@email.com", LocalDateTime.now(),
                 5000.0, insertDepartment);
 
-
         System.out.println("Seller found:");
         System.out.println(sellerFoundById + "\n");
         System.out.println("Department found:");
@@ -64,5 +63,23 @@ public class Main {
         allSellers = sellerDaoJDBC.findAll();
         allSellers.forEach(System.out::println);
 
+        System.out.println();
+
+        System.out.println("Update department with id: " + insertDepartment.getId());
+        insertDepartment.setName("Cars");
+        departmentDaoJDBC.update(insertDepartment);
+        System.out.println("All departments with updated department:");
+        allDepartments = departmentDaoJDBC.findAll();
+        allDepartments.forEach(System.out::println);
+
+        System.out.println();
+
+        System.out.println("Update seller with id: " + insertSeller.getId());
+        insertSeller.setName("John Smith");
+        insertSeller.setEmail("johnsmith@email.com");
+        sellerDaoJDBC.update(insertSeller);
+        System.out.println("All sellers with updated seller:");
+        allSellers = sellerDaoJDBC.findAll();
+        allSellers.forEach(System.out::println);
     }
 }
